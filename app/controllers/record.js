@@ -1,4 +1,5 @@
 var RecordService = require('../services/record');
+var SettingsService = require('../services/settings');
 var Q = require('q');
 
 module.exports = {
@@ -19,8 +20,12 @@ module.exports = {
   },
   list : function (req, res) {
     var page = req.params.page || 1;
-    RecordService.list(page).then(function(result){
-      res.send({ success: true, data : result });
+    SettingsService.get().then(function(settings){
+      RecordService.list(settings, page).then(function(result){
+        res.send({ success: true, data : result });
+      }, function(err){
+        console.log(err);
+      });
     }, function(err){
       console.log(err);
     });

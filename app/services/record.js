@@ -42,14 +42,14 @@ module.exports = {
 
     return deferred.promise;
   },
-  list : function (page) {
+  list : function (settings, page) {
     var deferred = Q.defer();
 
-    // TODO Get ordered column list from settings
-    // TODO Get sorting criteria from settings
-    // TODO Get sorting order from settings
+    var appearance = settings.appearance.toString().split(",").join(" ");
+    function combineObject(property, value){ this[property] = value && 1 || -1; }
+    var sortingCriteria = new combineObject(settings.sorting.column, settings.sorting.ascending);
 
-    Record.find({}, 'title', { sort: { title: -1 }}).paginate(page, parseInt(10), function(err, records, total) {
+    Record.find({}, appearance, { sort: sortingCriteria }).paginate(page, parseInt(30), function(err, records, total) {
       if (!err){
         if (records.length != 0){
           console.log("Feed has been successfully acquired!");
