@@ -6,14 +6,14 @@ module.exports = function(root){
 
   // Settings
 
-  Router.post('/api/settings/', SettingsController.save);
-  Router.get('/api/settings/', SettingsController.get);
+  Router.get('/api/settings/save', SettingsController.save);
+  Router.get('/api/settings/get', SettingsController.get);
 
   // Feed
 
-  Router.get('/api/addrecords/:amount', RecordController.add);
-  Router.get('/api/dropallrecords', RecordController.drop);
-  Router.get('/api/feed/:page', RecordController.list);
+  Router.get('/api/records/add/:amount', RecordController.add);
+  Router.get('/api/records/drop', RecordController.drop);
+  Router.get('/api/records/get/:page', RecordController.list);
 
   // Single Page Application
 

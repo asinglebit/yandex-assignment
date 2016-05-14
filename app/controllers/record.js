@@ -34,7 +34,11 @@ module.exports = {
     });
   },
   list : function (req, res) {
-    Record.find({}, '_id title', { sort: { title: -1 }}).paginate(1, parseInt(10), function(err, records, total) {
+    // TODO Get ordered column list from settings
+    // TODO Get sorting criteria from settings
+    // TODO Get sorting order from settings
+
+    Record.find({}, 'title', { sort: { title: -1 }}).paginate(req.params.page, parseInt(10), function(err, records, total) {
       if (!err){
         if (records.length != 0){
           res.send({ success : true, data : { docs : records, total : total, page : req.params.page }});

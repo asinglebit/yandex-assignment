@@ -1,29 +1,37 @@
-var Message = require('../models/settings.js').Message;
+var Settings = require('../models/settings.js').Settings;
 var Mongoose = require('mongoose');
 
 module.exports = {
   save : function (req, res) {
-    var date = new Date();
-    var message = req.body;
-    new Message({
-      date: date,
-      email: message.email,
-      text: message.text
-    }).save(function (err) {
+
+    // TODO Get settings from client-side or use default ones
+    var _Settings = new Settings({});
+
+    Settings.remove(function (err) {
       if (!err) {
-        res.send({ success: true });
-        console.log("Message has been successfully saved!");
+        console.log("Settings have been successfully dropped!");
+        _Settings.save(function (err) {
+          if (!err) {
+            console.log("Settings have been successfully reset!");
+            module.exports.get(req, res);
+          } else {
+            console.log(err);
+          }
+        });
       } else {
         console.log(err);
       }
     });
   },
-
   get : function(req, res){
-    Message.findById(Mongoose.Types.ObjectId(req.params.id), function (err, foundMessage) {
+    Settings.findOne({}, function (err, result) {
       if (!err) {
-        res.send({ success: true, data: foundMessage });
-        console.log("Message with id " + req.params.id + " has been successfully found!");
+        if (!result){
+          module.exports.save(req, res);
+        } else {
+          res.send({ success: true, data: result });
+          console.log("Settings have been successfully retrieved!");
+        }
       } else {
         console.log(err);
       }

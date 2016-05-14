@@ -5,7 +5,7 @@ var SettingsSchema = Mongoose.Schema({
     column: { type: String, default: "title" },
     ascending: { type: Boolean, default: true }
   },
-  appearance: { type: [String] }
+  appearance: { type: [String], default: ["title", "author", "link", "publicationDate", "rating", "availability"] }
 });
 
 var Settings = Mongoose.model('Settings', SettingsSchema);
