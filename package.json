@@ -25,6 +25,7 @@
     "gulp-uglifyjs": "^0.6.2",
     "method-override": "~2.0.2",
     "mongoose": "4.3.6",
-    "mongoose-pagination": "^1.0.0"
+    "mongoose-pagination": "^1.0.0",
+    "q": "~1.4.1"
   }
 }
