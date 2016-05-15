@@ -14,7 +14,7 @@ module.exports = {
   },
 
   randomNumber : function (){
-      return Math.floor(Math.random() * 201) - 100;
+      return Math.floor(Math.random() * (201)) - 100 + Math.random();
   },
 
   randomBoolean : function (){

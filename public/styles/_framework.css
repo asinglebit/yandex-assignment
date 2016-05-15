@@ -1,7 +1,16 @@
-/* Container */
+/* Layout */
 
 .framework-container {
-  margin: 10px;
+  margin: 20px;
+  padding : 20px;
+}
+.framework-left {
+  margin-right: 10px;
+  float: left;
+}
+.framework-right {
+  margin-left: 10px;
+  float: right;
 }
 
 /* Text */

@@ -10,9 +10,7 @@
     console.log("_button.js : No '_framework' module found! Be sure to load it up first!");
     return;
   }
-
-
-
+  
   var _bind_schema = function(instance){
     instance.schema = _framework.schemas[instance.schema_name];
   }

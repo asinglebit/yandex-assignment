@@ -46,7 +46,7 @@
     var row = document.createElement("tr");
     for (var i = 0; i < _instance.num_of_columns; i++) {
       var cell = document.createElement("th");
-      var cellText = document.createTextNode(_instance.schema.data.columns[i]);
+      var cellText = _framework.filters.title(_instance.schema.data.columns[i]);
       cell.appendChild(cellText);
       row.appendChild(cell);
     }
@@ -77,7 +77,7 @@
 
   var _load_data = function(data, _instance){
 
-    // Omitting success checks because of laziness
+    // Omitting success checks because of laziness =)
     data = JSON.parse(data).data.data;
 
     if (typeof data.docs != "undefined"){
@@ -85,7 +85,7 @@
         var row = document.createElement("tr");
         for (var i = 0; i < _instance.num_of_columns; i++) {
           var cell = document.createElement("td");
-          var cellText = _framework.filter(data.docs[j][_instance.schema.data.columns[i]]);
+          var cellText = _framework.filters.value(data.docs[j][_instance.schema.data.columns[i]]);
           cell.appendChild(cellText);
           row.appendChild(cell);
         }

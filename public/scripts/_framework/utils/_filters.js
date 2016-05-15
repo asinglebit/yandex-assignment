@@ -17,12 +17,17 @@
 
   var filter_string = function(input){
     if(!url_pattern.test(input)) {
-      return document.createTextNode(input);
+      if (isNaN(Date.parse(input))){
+        return document.createTextNode(input);
+      } else {
+        var date = new Date(input);
+        return document.createTextNode(date.toTimeString());
+      }
     } else {
       var a = document.createElement('a');
-      var linkText = document.createTextNode("link");
+      var linkText = document.createTextNode("Link");
       a.appendChild(linkText);
-      a.title = "title";
+      a.title = input;
       a.href = input;
       return a;
     }
@@ -45,16 +50,21 @@
     return document.createTextNode(input ? "Available" : "Not Available");
   }
 
-  _framework.filter = function(input){
-    switch (typeof input) {
-      case 'string':
-      return filter_string(input);
-      case 'number':
-      return filter_number(input);
-      case 'boolean':
-      return filter_boolean(input);
-      default:
-      return document.createTextNode("?");
+  _framework.filters = {
+    value : function(input){
+      switch (typeof input) {
+        case 'string':
+        return filter_string(input);
+        case 'number':
+        return filter_number(input);
+        case 'boolean':
+        return filter_boolean(input);
+        default:
+        return document.createTextNode("?");
+      }
+    },
+    title : function(input){
+      return document.createTextNode(input.replace(/([A-Z]+)/g, " $1").replace(/([A-Z][a-z])/g, " $1").replace(/\b[a-z]/g,function(f){return f.toUpperCase();}));
     }
   };
 
