@@ -1,263 +1,247 @@
 // Framework component (table)
 
-(function(){
+(function () {
 
-  'use strict'
+    'use strict';
 
-  // Check framework availability
+    // Check framework availability
 
-  if (typeof _framework == "undefined") {
-    console.log("_table.js : No '_framework' module found! Be sure to load it up first!");
-    return;
-  };
-
-  if (typeof _framework.http == "undefined") {
-    console.log("_table.js : No 'http' module found! Be sure to load it up first!");
-    return;
-  };
-
-  if (typeof _framework.filters == "undefined") {
-    console.log("_table.js : No 'filters' module found! Be sure to load it up first!");
-    return;
-  };
-
-  var _update_schema = function(instance){
-    _framework.schemas[instance.schema_name] = instance.schema;
-  };
-
-  var _bind_schema = function(instance){
-    instance.schema = _framework.schemas[instance.schema_name];
-    instance.num_of_columns = instance.schema.data.appearance.length;
-  };
-
-  var _clear_elements = function(instance){
-    if (instance.elements.table_body){
-      while (instance.elements.table_body.firstChild) {
-        instance.elements.table_body.removeChild(instance.elements.table_body.firstChild);
-      }
+    if (typeof _framework === "undefined") {
+        console.log("_table.js : No '_framework' module found! Be sure to load it up first!");
+        return;
     }
-  };
 
-  var _clear_root = function(instance){
-    if (instance.elements.root){
-      while (instance.elements.root.firstChild) {
-        instance.elements.root.removeChild(instance.elements.root.firstChild);
-      }
+    if (typeof _framework.http === "undefined") {
+        console.log("_table.js : No 'http' module found! Be sure to load it up first!");
+        return;
     }
-  };
 
-  var _generate_elements = function(instance){
-
-    _clear_root(instance);
-    _bind_schema(instance);
-
-    // Table
-
-    instance.elements.table = document.createElement("table");
-
-    // Table head
-
-    instance.elements.table_head = document.createElement("thead");
-    var row = document.createElement("tr");
-    for (var i = 0; i < instance.num_of_columns; i++) {
-
-      // Cell
-
-      var cell = document.createElement("th");
-
-      // Column Name
-
-      var spanColumnName = document.createElement("span");
-      var cellTextName = _framework.filters.title(instance.schema.data.appearance[i]);
-      spanColumnName.appendChild(cellTextName);
-      cell.appendChild(spanColumnName);
-      row.appendChild(cell);
-
-      // IIFE to save the scope of the column name holding variable
-
-      (function(){
-
-        var columnName = instance.schema.data.appearance[i];
-
-        // Sortable column
-
-        if (!instance.schema.data.sorting.disabled.toString().includes(instance.schema.data.appearance[i])){
-          spanColumnName.className = "link";
-          spanColumnName.addEventListener("click", function(){
-            instance.schema.data.sorting.column = columnName;
-            instance.schema.data.sorting.ascending = !instance.schema.data.sorting.ascending;
-            _update_schema(instance);
-            instance.schema.methods.column_click(columnName);
-          });
-        }
-
-        // Hide button
-
-        if (!instance.schema.data.sorting.fixed.toString().includes(instance.schema.data.appearance[i])){
-          var spanHide = document.createElement("span");
-          var cellTextHide = document.createTextNode("x ");
-          spanHide.appendChild(cellTextHide);
-          spanHide.className = "link framework-right";
-          cell.appendChild(spanHide);
-
-          spanHide.addEventListener("click", function(){
-            var index = instance.schema.data.appearance.indexOf(columnName);
-            if (index !== -1) {
-              instance.schema.data.appearance.splice(index, 1);
-            }
-            _update_schema(instance);
-            instance.schema.methods.column_click(columnName);
-          });
-        }
-
-        // Left button
-
-        if (!instance.schema.data.sorting.fixed.toString().includes(instance.schema.data.appearance[i])){
-          var index = instance.schema.data.appearance.indexOf(columnName);
-          if ((index !== -1) && (index < instance.schema.data.appearance.length) && (index > 0)){
-            if (!instance.schema.data.sorting.fixed.toString().includes(instance.schema.data.appearance[index - 1])){
-              var spanLeft = document.createElement("span");
-              var cellTextLeft = document.createTextNode("<");
-              spanLeft.appendChild(cellTextLeft);
-              spanLeft.className = "link framework-left";
-              cell.appendChild(spanLeft);
-
-              spanLeft.addEventListener("click", function(){
-                var removed = instance.schema.data.appearance.splice(index, 1)[0];
-                instance.schema.data.appearance.splice(index - 1, 0, removed)
-                _update_schema(instance);
-                instance.schema.methods.column_click(columnName);
-              });
-            }
-          }
-        }
-
-        // Right button
-
-        if (!instance.schema.data.sorting.fixed.toString().includes(instance.schema.data.appearance[i])){
-          var index = instance.schema.data.appearance.indexOf(columnName);
-          if ((index !== -1) && (index < instance.schema.data.appearance.length - 1) && (index > 0)){
-            if (!instance.schema.data.sorting.fixed.toString().includes(instance.schema.data.appearance[index + 1])){
-              var spanRight = document.createElement("span");
-              var cellTextRight = document.createTextNode(">");
-              spanRight.appendChild(cellTextRight);
-              spanRight.className = "link";
-              cell.appendChild(spanRight);
-
-              spanRight.addEventListener("click", function(){
-                var removed = instance.schema.data.appearance.splice(index, 1)[0];
-                instance.schema.data.appearance.splice(index + 1, 0, removed)
-                _update_schema(instance);
-                instance.schema.methods.column_click(columnName);
-              });
-            }
-          }
-        }
-
-      })();
+    if (typeof _framework.filters === "undefined") {
+        console.log("_table.js : No 'filters' module found! Be sure to load it up first!");
+        return;
     }
-    instance.elements.table_head.appendChild(row);
 
-    // Table body
+    function Table(root) {
+        var self = this;
 
-    instance.elements.table_body = document.createElement("tbody");
-    instance.elements.table.appendChild(instance.elements.table_head);
-    instance.elements.table.appendChild(instance.elements.table_body);
-    instance.elements.root.appendChild(instance.elements.table);
-
-    // Add classes
-
-    instance.elements.table.className += instance.schema.classes.toString().split(",").join(" ");
-
-    instance.schema.methods.table_generated();
-  }
-
-  var _load_settings = function(data, instance){
-    data = data.data;
-    instance.schema.data.appearance = data.appearance;
-    instance.schema.data.sorting = data.sorting;
-    _bind_schema(instance);
-    _generate_elements(instance);
-  }
-
-  var _load_data = function(data, instance){
-    data = data.data.data;
-    if (typeof data.docs != "undefined"){
-      for (var j = 0; j < data.docs.length; j++) {
-        var row = document.createElement("tr");
-        for (var i = 0; i < instance.num_of_columns; i++) {
-          var cell = document.createElement("td");
-          var cellText = _framework.filters.value(data.docs[j][instance.schema.data.appearance[i]]);
-          cell.appendChild(cellText);
-          row.appendChild(cell);
-        }
-        instance.elements.table_body.appendChild(row);
-      }
-    }
-  }
-
-  var table = {
-
-    // Component's tag
-
-    tag : "framework-table",
-
-    // Methods
-
-    methods : {
-
-      // Initialize component
-
-      initialize : function(root){
-
-        var instance = {
-          schema_name : "",
-          num_of_columns : 0,
-          elements : {
-            root : {}
-          }
+        this.num_of_columns = 0;
+        this.elements = {
+            root: root
         };
-
-        // Get root element
-
-        instance.elements.root = root;
-
-        // Get schema name
-
-        instance.schema_name = instance.elements.root.getAttribute("framework-schema");
-        if (!(_framework.schemas.hasOwnProperty(instance.schema_name))) {
-          console.log("No schema defined for '" + instance.schema_name + "' !");
-          return false;
+        this.schema_name = root.getAttribute('framework-schema');
+        if (!_framework.schemas[this.schema_name]) {
+            console.error("No schema defined for '" + this.schema_name + "' !");
         }
 
         // Bind schema
 
-        _bind_schema(instance);
+        this._bind_schema();
 
         // Bind event handlers
 
-        _framework.event_emitter.on(instance.schema.events.load_settings, function(data){
-          _load_settings(data, instance);
+        _framework.event_emitter.on(this.schema.events.load_settings, function(data){
+          self._load_settings(data);
         })
 
-        _framework.event_emitter.on(instance.schema.events.generate_table, function(){
-          _generate_elements(instance);
+        _framework.event_emitter.on(this.schema.events.generate_table, function(){
+          self._generate_elements();
         })
 
-        _framework.event_emitter.on(instance.schema.events.load_data, function(data){
-          _load_data(data, instance);
+        _framework.event_emitter.on(this.schema.events.load_data, function(data){
+          self._load_data(data);
         })
 
-        _framework.event_emitter.on(instance.schema.events.drop_data, function(){
-          _clear_elements(instance);
-          instance.schema.methods.data_dropped();
+        _framework.event_emitter.on(this.schema.events.drop_data, function(){
+          self._clear_elements();
+          self.schema.methods.data_dropped();
         })
-
-        return instance;
-      }
     }
-  }
 
-  _framework.register(table);
+    Table.prototype._bind_schema = function() {
+        this.schema = _framework.schemas[this.schema_name];
+        this.num_of_columns = this.schema.data.columns.length;
+    };
+
+    Table.prototype._update_schema = function(){
+      _framework.schemas[this.schema_name] = this.schema;
+    };
+
+    Table.prototype._bind_schema = function(){
+      this.schema = _framework.schemas[this.schema_name];
+      this.num_of_columns = this.schema.data.appearance.length;
+    };
+
+    Table.prototype._clear_elements = function(){
+      if (this.elements.table_body){
+        while (this.elements.table_body.firstChild) {
+          this.elements.table_body.removeChild(this.elements.table_body.firstChild);
+        }
+      }
+    };
+
+    Table.prototype._clear_root = function(){
+      if (this.elements.root){
+        while (this.elements.root.firstChild) {
+          this.elements.root.removeChild(this.elements.root.firstChild);
+        }
+      }
+    };
+
+    Table.prototype._generate_elements = function(){
+
+      var self = this;
+
+      this._clear_root();
+      this._bind_schema();
+
+      // Table
+
+      this.elements.table = document.createElement("table");
+
+      // Table head
+
+      this.elements.table_head = document.createElement("thead");
+      var row = document.createElement("tr");
+      for (var i = 0; i < this.num_of_columns; i++) {
+
+        // Cell
+
+        var cell = document.createElement("th");
+
+        // Column Name
+
+        var spanColumnName = document.createElement("span");
+        var cellTextName = _framework.filters.title(this.schema.data.appearance[i]);
+        spanColumnName.appendChild(cellTextName);
+        cell.appendChild(spanColumnName);
+        row.appendChild(cell);
+
+        // IIFE to save the scope of the column name holding variable
+
+        (function(){
+
+          var columnName = self.schema.data.appearance[i];
+
+          // Sortable column
+
+          if (!self.schema.data.sorting.disabled.toString().includes(self.schema.data.appearance[i])){
+            spanColumnName.className = "link";
+            spanColumnName.addEventListener("click", function(){
+              self.schema.data.sorting.column = columnName;
+              self.schema.data.sorting.ascending = !self.schema.data.sorting.ascending;
+              self._update_schema();
+              self.schema.methods.column_click(columnName);
+            });
+          }
+
+          // Hide button
+
+          if (!self.schema.data.sorting.fixed.toString().includes(self.schema.data.appearance[i])){
+            var spanHide = document.createElement("span");
+            var cellTextHide = document.createTextNode("x ");
+            spanHide.appendChild(cellTextHide);
+            spanHide.className = "link framework-right";
+            cell.appendChild(spanHide);
+
+            spanHide.addEventListener("click", function(){
+              var index = self.schema.data.appearance.indexOf(columnName);
+              if (index !== -1) {
+                self.schema.data.appearance.splice(index, 1);
+              }
+              self._update_schema();
+              self.schema.methods.column_click(columnName);
+            });
+          }
+
+          // Left button
+
+          if (!self.schema.data.sorting.fixed.toString().includes(self.schema.data.appearance[i])){
+            var index = self.schema.data.appearance.indexOf(columnName);
+            if ((index !== -1) && (index < self.schema.data.appearance.length) && (index > 0)){
+              if (!self.schema.data.sorting.fixed.toString().includes(self.schema.data.appearance[index - 1])){
+                var spanLeft = document.createElement("span");
+                var cellTextLeft = document.createTextNode("<");
+                spanLeft.appendChild(cellTextLeft);
+                spanLeft.className = "link framework-left";
+                cell.appendChild(spanLeft);
+
+                spanLeft.addEventListener("click", function(){
+                  var removed = self.schema.data.appearance.splice(index, 1)[0];
+                  self.schema.data.appearance.splice(index - 1, 0, removed)
+                  self._update_schema();
+                  self.schema.methods.column_click(columnName);
+                });
+              }
+            }
+          }
+
+          // Right button
+
+          if (!self.schema.data.sorting.fixed.toString().includes(self.schema.data.appearance[i])){
+            var index = self.schema.data.appearance.indexOf(columnName);
+            if ((index !== -1) && (index < self.schema.data.appearance.length - 1) && (index > 0)){
+              if (!self.schema.data.sorting.fixed.toString().includes(self.schema.data.appearance[index + 1])){
+                var spanRight = document.createElement("span");
+                var cellTextRight = document.createTextNode(">");
+                spanRight.appendChild(cellTextRight);
+                spanRight.className = "link";
+                cell.appendChild(spanRight);
+
+                spanRight.addEventListener("click", function(){
+                  var removed = self.schema.data.appearance.splice(index, 1)[0];
+                  self.schema.data.appearance.splice(index + 1, 0, removed)
+                  self._update_schema();
+                  self.schema.methods.column_click(columnName);
+                });
+              }
+            }
+          }
+
+        })();
+      }
+      this.elements.table_head.appendChild(row);
+
+      // Table body
+
+      this.elements.table_body = document.createElement("tbody");
+      this.elements.table.appendChild(this.elements.table_head);
+      this.elements.table.appendChild(this.elements.table_body);
+      this.elements.root.appendChild(this.elements.table);
+
+      // Add classes
+
+      this.elements.table.className += this.schema.classes.toString().split(",").join(" ");
+
+      this.schema.methods.table_generated();
+    };
+
+    Table.prototype._load_settings = function(data){
+      data = data.data;
+      this.schema.data.appearance = data.appearance;
+      this.schema.data.sorting = data.sorting;
+      this._bind_schema();
+      this._generate_elements();
+    };
+
+    Table.prototype._load_data = function(data){
+      data = data.data.data;
+      if (typeof data.docs != "undefined"){
+        for (var j = 0; j < data.docs.length; j++) {
+          var row = document.createElement("tr");
+          for (var i = 0; i < this.num_of_columns; i++) {
+            var cell = document.createElement("td");
+            var cellText = _framework.filters.value(data.docs[j][this.schema.data.appearance[i]]);
+            cell.appendChild(cellText);
+            row.appendChild(cell);
+          }
+          this.elements.table_body.appendChild(row);
+        }
+      }
+    };
+
+    _framework.register({
+        constructor: Table,
+        tag: 'framework-table'
+    });
 
 })();

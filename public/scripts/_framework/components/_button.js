@@ -1,81 +1,52 @@
 // Framework component (button)
 
-(function(){
+(function () {
+    'use strict';
 
-  'use strict'
+    // Check framework availability
+    if (typeof _framework === "undefined") {
+        console.log("_button.js : No '_framework' module found! Be sure to load it up first!");
+        return;
+    }
 
-  // Check framework availability
+    function Button(root) {
+        var self = this;
 
-  if (typeof _framework == "undefined") {
-    console.log("_button.js : No '_framework' module found! Be sure to load it up first!");
-    return;
-  }
-  
-  var _bind_schema = function(instance){
-    instance.schema = _framework.schemas[instance.schema_name];
-  }
-
-  var _generate_elements = function(instance){
-
-    // Generate elements
-
-    instance.elements.button = document.createElement("BUTTON");
-    instance.elements.label = document.createTextNode(instance.schema.data.label);
-    instance.elements.button.appendChild(instance.elements.label);
-    instance.elements.root.appendChild(instance.elements.button);
-
-    // Add classes
-
-    instance.elements.button.className += instance.schema.classes.toString().split(",").join(" ");
-  }
-
-  var button = {
-
-    // Component's tag
-
-    tag : "framework-button",
-
-    // Methods
-
-    methods : {
-
-      // Initialize component
-
-      initialize : function(root){
-
-        var instance = {
-          schema_name : "",
-          elements : {
-            root : {}
-          }
+        this.schema_name = '';
+        this.elements = {
+            root: root
         };
 
-        // Get root element
-
-        instance.elements.root = root;
-
         // Get schema name
-
-        instance.schema_name = instance.elements.root.getAttribute("framework-schema");
-        if (!(_framework.schemas.hasOwnProperty(instance.schema_name))) {
-          console.log("No schema defined for '" + instance.schema_name + "' !");
-          return false;
+        this.schema_name = root.getAttribute("framework-schema");
+        if (!_framework.schemas[this.schema_name]) {
+            console.error("No schema defined for '" + this.schema_name + "' !");
         }
 
-        // Bind schema
+        this._bind_schema();
+        this._generate_elements();
 
-        _bind_schema(instance);
-        _generate_elements(instance);
-
-        // Bind methods
-
-        instance.elements.button.addEventListener("click", instance.schema.methods.click);
-
-        return instance;
-      }
+        this.elements.button.addEventListener("click", this.schema.methods.click);
     }
-  }
 
-  _framework.register(button);
+    Button.prototype._bind_schema = function() {
+        this.schema = _framework.schemas[this.schema_name];
+    };
+
+    Button.prototype._generate_elements = function () {
+        // Generate elements
+        this.elements.button = document.createElement("BUTTON");
+        this.elements.label = document.createTextNode(this.schema.data.label);
+        this.elements.button.appendChild(this.elements.label);
+        this.elements.root.appendChild(this.elements.button);
+
+        // Add classes
+        this.elements.button.className += this.schema.classes.toString().split(",").join(" ");
+    };
+
+    _framework.register({
+        constructor: Button,
+        tag: 'framework-button'
+    });
 
 })();
