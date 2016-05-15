@@ -67,7 +67,7 @@
   var _load_settings = function(data, _instance){
 
     // Omitting success checks because of laziness
-    data = JSON.parse(data).data;
+    data = data.data;
 
     _instance.schema.data.columns = data.appearance;
     _bind_schema(_instance);
@@ -78,7 +78,7 @@
   var _load_data = function(data, _instance){
 
     // Omitting success checks because of laziness =)
-    data = JSON.parse(data).data.data;
+    data = data.data.data;
 
     if (typeof data.docs != "undefined"){
       for (var j = 0; j < data.docs.length; j++) {

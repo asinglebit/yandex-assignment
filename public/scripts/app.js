@@ -33,10 +33,10 @@
   var load = function(records_per_page){
     console.log("Loading page " + current_page + " by " + records_per_page + " records per page.");
     _framework.http.get("/api/records/get/" + current_page++ + "/" + records_per_page, function(data){
-      if (JSON.parse(data).data.success) {
+      if (data.data.success) {
         _framework.event_emitter.emit("event_load_data", data);
       } else {
-        console.log("No records.");
+        console.log("No records left.");
         current_page = 1;
       }
     });
@@ -74,7 +74,7 @@
   window.onscroll = function(ev) {
     if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
       load(records_per_page);
-      console.log("Scrolled to bottom");
+      console.log("Scrolled to bottom.");
     }
   };
 
