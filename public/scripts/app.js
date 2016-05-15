@@ -25,29 +25,46 @@
   // Some basic functions
 
   var get_settings = function(){
+    console.log("Getting settings.");
     _framework.http.get("/api/settings/get", function(data){
       _framework.event_emitter.emit("event_load_settings", data);
     });
   };
   var load = function(records_per_page){
+    console.log("Loading page " + current_page + " by " + records_per_page + " records per page.");
     _framework.http.get("/api/records/get/" + current_page++ + "/" + records_per_page, function(data){
-      _framework.event_emitter.emit("event_load_data", data);
+      if (JSON.parse(data).data.success) {
+        _framework.event_emitter.emit("event_load_data", data);
+      } else {
+        console.log("No records.");
+        current_page = 1;
+      }
     });
   };
-  var clear = function(){
+  var refresh = function(){
+    console.log("Refreshing feed.");
     current_page = 1;
     _framework.event_emitter.emit("event_drop_data");
+    load(records_per_page);
   };
   var drop = function(){
+    console.log("Dropping feed.");
     _framework.http.get("/api/records/drop", function(data){
-      clear();
+      refresh();
     });
   };
   var insert = function(){
+    console.log("Inserting " + records_to_insert + " records.");
     _framework.http.get("/api/records/add/" + records_to_insert, function(data){
-      clear();
+      refresh();
     });
   };
+  var save_settings = function(){
+    console.log("Saving settings.");
+    _framework.http.get("/api/settings/save", function(data){
+      refresh();
+    });
+  }
 
   get_settings();
   load(100);
@@ -86,11 +103,11 @@
         'button '
       ],
       data : {
-        label : "Clear"
+        label : "Refresh"
       },
       methods : {
         click : function(){
-          clear();
+          refresh();
           console.log("buttonSchema_clear button has been pressed.");
         }
       }
@@ -123,19 +140,6 @@
         }
       }
     },
-    buttonSchema_sb_settings_reset : {
-      classes : [
-        'button'
-      ],
-      data : {
-        label : "Reset Settings"
-      },
-      methods : {
-        click : function(){
-          console.log("buttonSchema_sb_settings_reset button has been pressed.");
-        }
-      }
-    },
     buttonSchema_sb_settings_save : {
       classes : [
         'button'
@@ -145,6 +149,7 @@
       },
       methods : {
         click : function(){
+          save_settings();
           console.log("buttonSchema_sb_settings_save button has been pressed.");
         }
       }
