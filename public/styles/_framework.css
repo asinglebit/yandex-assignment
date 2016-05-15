@@ -1,3 +1,18 @@
+/* Container */
+
+.framework-container {
+  margin: 10px;
+}
+
+/* Text */
+
+.positive-number {
+  color : blue;
+}
+.negative-number {
+  color : red;
+}
+
 /* Table */
 
 .table {
@@ -80,9 +95,4 @@ tr {
   color: #333;
   background-color: #e6e6e6;
   border-color: #adadad;
-}
-
-/* Container */
-.framework-container {
-  margin: 10px;
 }

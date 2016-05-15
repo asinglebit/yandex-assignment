@@ -16,6 +16,11 @@
     return;
   }
 
+  if (typeof _framework.http == "undefined") {
+    console.log("_table.js : No 'filters' module found! Be sure to load it up first!");
+    return;
+  }
+
   var _bind_schema = function(_instance){
     _instance.schema = _framework.schemas[_instance.schema_name];
     _instance.num_of_columns = _instance.schema.data.columns.length;
@@ -80,7 +85,7 @@
         var row = document.createElement("tr");
         for (var i = 0; i < _instance.num_of_columns; i++) {
           var cell = document.createElement("td");
-          var cellText = document.createTextNode(data.docs[j][_instance.schema.data.columns[i]]);
+          var cellText = _framework.filter(data.docs[j][_instance.schema.data.columns[i]]);
           cell.appendChild(cellText);
           row.appendChild(cell);
         }
