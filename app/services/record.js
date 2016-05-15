@@ -49,7 +49,7 @@ module.exports = {
     function combineObject(property, value){ this[property] = value && 1 || -1; }
     var sortingCriteria = new combineObject(settings.sorting.column, settings.sorting.ascending);
 
-    Record.find({}, appearance, { sort: sortingCriteria }).paginate(page, count, function(err, records, total) {
+    Record.find({}, appearance, { sort: sortingCriteria }).paginate(page, parseInt(count), function(err, records, total) {
       if (!err){
         if (records.length != 0){
           console.log("Feed has been successfully acquired!");

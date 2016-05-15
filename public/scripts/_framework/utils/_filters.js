@@ -25,7 +25,7 @@
       }
     } else {
       var a = document.createElement('a');
-      var linkText = document.createTextNode("Link");
+      var linkText = document.createTextNode(input);
       a.appendChild(linkText);
       a.title = input;
       a.href = input;

@@ -21,6 +21,11 @@
 .negative-number {
   color : red;
 }
+.link {
+  color: blue;
+  cursor: pointer;
+  text-decoration: underline;
+}
 
 /* Table */
 

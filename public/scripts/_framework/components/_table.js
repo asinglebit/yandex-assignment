@@ -21,61 +21,73 @@
     return;
   }
 
-  var _bind_schema = function(_instance){
-    _instance.schema = _framework.schemas[_instance.schema_name];
-    _instance.num_of_columns = _instance.schema.data.columns.length;
+  var _bind_schema = function(instance){
+    instance.schema = _framework.schemas[instance.schema_name];
+    instance.num_of_columns = instance.schema.data.appearance.length;
   }
 
-  var _clear_elements = function(_instance){
-    if (_instance.elements.table_body){
-      while (_instance.elements.table_body.firstChild) {
-        _instance.elements.table_body.removeChild(_instance.elements.table_body.firstChild);
+  var _clear_elements = function(instance){
+    if (instance.elements.table_body){
+      while (instance.elements.table_body.firstChild) {
+        instance.elements.table_body.removeChild(instance.elements.table_body.firstChild);
       }
     }
   }
 
-  var _generate_elements = function(_instance){
+  var _generate_elements = function(instance){
 
     // Table
 
-    _instance.elements.table = document.createElement("table");
+    instance.elements.table = document.createElement("table");
 
     // Table head
 
-    _instance.elements.table_head = document.createElement("thead");
+    instance.elements.table_head = document.createElement("thead");
     var row = document.createElement("tr");
-    for (var i = 0; i < _instance.num_of_columns; i++) {
+    for (var i = 0; i < instance.num_of_columns; i++) {
       var cell = document.createElement("th");
-      var cellText = _framework.filters.title(_instance.schema.data.columns[i]);
-      cell.appendChild(cellText);
+      var cellText = _framework.filters.title(instance.schema.data.appearance[i]);
+      var span = document.createElement("span");
+      span.appendChild(cellText);
+      cell.appendChild(span);
       row.appendChild(cell);
+
+      // IIFE to save the scope of the column name holding variable
+      if (!instance.schema.data.sorting.disabled.toString().includes(instance.schema.data.appearance[i])){
+        (function(){
+          span.className = "link";
+          var columnName = instance.schema.data.appearance[i];
+          span.addEventListener("click", function(){instance.schema.methods.column_click(columnName)});
+        })();
+      }
     }
-    _instance.elements.table_head.appendChild(row);
+    instance.elements.table_head.appendChild(row);
 
     // Table body
 
-    _instance.elements.table_body = document.createElement("tbody");
-    _instance.elements.table.appendChild(_instance.elements.table_head);
-    _instance.elements.table.appendChild(_instance.elements.table_body);
-    _instance.elements.root.appendChild(_instance.elements.table);
+    instance.elements.table_body = document.createElement("tbody");
+    instance.elements.table.appendChild(instance.elements.table_head);
+    instance.elements.table.appendChild(instance.elements.table_body);
+    instance.elements.root.appendChild(instance.elements.table);
 
     // Add classes
 
-    _instance.elements.table.className += _instance.schema.classes.toString().split(",").join(" ");
+    instance.elements.table.className += instance.schema.classes.toString().split(",").join(" ");
   }
 
-  var _load_settings = function(data, _instance){
+  var _load_settings = function(data, instance){
 
     // Omitting success checks because of laziness
     data = data.data;
 
-    _instance.schema.data.columns = data.appearance;
-    _bind_schema(_instance);
-    _clear_elements(_instance);
-    _generate_elements(_instance);
+    instance.schema.data.appearance = data.appearance;
+    instance.schema.data.sorting = data.sorting;
+    _bind_schema(instance);
+    _clear_elements(instance);
+    _generate_elements(instance);
   }
 
-  var _load_data = function(data, _instance){
+  var _load_data = function(data, instance){
 
     // Omitting success checks because of laziness =)
     data = data.data.data;
@@ -83,13 +95,13 @@
     if (typeof data.docs != "undefined"){
       for (var j = 0; j < data.docs.length; j++) {
         var row = document.createElement("tr");
-        for (var i = 0; i < _instance.num_of_columns; i++) {
+        for (var i = 0; i < instance.num_of_columns; i++) {
           var cell = document.createElement("td");
-          var cellText = _framework.filters.value(data.docs[j][_instance.schema.data.columns[i]]);
+          var cellText = _framework.filters.value(data.docs[j][instance.schema.data.appearance[i]]);
           cell.appendChild(cellText);
           row.appendChild(cell);
         }
-        _instance.elements.table_body.appendChild(row);
+        instance.elements.table_body.appendChild(row);
       }
     }
   }
@@ -108,7 +120,7 @@
 
       initialize : function(root){
 
-        var _instance = {
+        var instance = {
           schema_name : "",
           num_of_columns : 0,
           elements : {
@@ -118,35 +130,35 @@
 
         // Get root element
 
-        _instance.elements.root = root;
+        instance.elements.root = root;
 
         // Get schema name
 
-        _instance.schema_name = _instance.elements.root.getAttribute("framework-schema");
-        if (!(_framework.schemas.hasOwnProperty(_instance.schema_name))) {
-          console.log("No schema defined for '" + _instance.schema_name + "' !");
+        instance.schema_name = instance.elements.root.getAttribute("framework-schema");
+        if (!(_framework.schemas.hasOwnProperty(instance.schema_name))) {
+          console.log("No schema defined for '" + instance.schema_name + "' !");
           return false;
         }
 
         // Bind schema
 
-        _bind_schema(_instance);
+        _bind_schema(instance);
 
         // Bind event handlers
 
-        _framework.event_emitter.on(_instance.schema.events.load_settings, function(data){
-          _load_settings(data, _instance);
+        _framework.event_emitter.on(instance.schema.events.load_settings, function(data){
+          _load_settings(data, instance);
         })
 
-        _framework.event_emitter.on(_instance.schema.events.load_data, function(data){
-          _load_data(data, _instance);
+        _framework.event_emitter.on(instance.schema.events.load_data, function(data){
+          _load_data(data, instance);
         })
 
-        _framework.event_emitter.on(_instance.schema.events.drop_data, function(){
-          _clear_elements(_instance);
+        _framework.event_emitter.on(instance.schema.events.drop_data, function(){
+          _clear_elements(instance);
         })
 
-        return _instance;
+        return instance;
       }
     }
   }

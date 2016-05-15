@@ -3,7 +3,8 @@ var Mongoose = require("mongoose");
 var SettingsSchema = Mongoose.Schema({
   sorting: {
     column: { type: String, default: "title" },
-    ascending: { type: Boolean, default: true }
+    ascending: { type: Boolean, default: true },
+    disabled: { type: [String], default: ["availability"] }
   },
   appearance: { type: [String], default: ["title", "author", "link", "publicationDate", "rating", "availability"] }
 });

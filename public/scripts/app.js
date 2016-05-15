@@ -163,7 +163,12 @@
       ],
       data : {
         label : "Feed",
-        columns : []
+        appearance : []
+      },
+      methods : {
+        column_click : function(column_name){
+          console.log("Column " + column_name + " clicked.");
+        }
       },
       events : {
         load_settings : "event_load_settings",
