@@ -12,6 +12,15 @@
   margin-left: 10px;
   float: right;
 }
+.framework-link-left {
+  float: left;
+}
+.framework-link-right {
+  float: right;
+}
+body {
+  overflow-y:scroll;
+}
 
 /* Text */
 
@@ -22,9 +31,10 @@
   color : red;
 }
 .link {
+  margin-left: 2px;
+  margin-right: 2px;
   color: blue;
   cursor: pointer;
-  text-decoration: underline;
 }
 
 /* Table */
@@ -51,6 +61,9 @@
   text-align: left;
   vertical-align: top;
   border-top: 1px solid #dddddd;
+  min-width: 100px;
+  max-width: 100px;
+  overflow:hidden;
 }
 table {
   max-width: 100%;

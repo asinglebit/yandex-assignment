@@ -4,7 +4,8 @@ var SettingsSchema = Mongoose.Schema({
   sorting: {
     column: { type: String, default: "title" },
     ascending: { type: Boolean, default: true },
-    disabled: { type: [String], default: ["availability"] }
+    disabled: { type: [String], default: ["availability"] },
+    fixed: { type: [String], default: ["title"] }
   },
   appearance: { type: [String], default: ["title", "author", "link", "publicationDate", "rating", "availability"] }
 });

@@ -38,7 +38,18 @@
     }
   };
 
+  var _clear_root = function(instance){
+    if (instance.elements.root){
+      while (instance.elements.root.firstChild) {
+        instance.elements.root.removeChild(instance.elements.root.firstChild);
+      }
+    }
+  };
+
   var _generate_elements = function(instance){
+
+    _clear_root(instance);
+    _bind_schema(instance);
 
     // Table
 
@@ -49,26 +60,56 @@
     instance.elements.table_head = document.createElement("thead");
     var row = document.createElement("tr");
     for (var i = 0; i < instance.num_of_columns; i++) {
+
+      // Cell
+
       var cell = document.createElement("th");
-      var cellText = _framework.filters.title(instance.schema.data.appearance[i]);
-      var span = document.createElement("span");
-      span.appendChild(cellText);
-      cell.appendChild(span);
+
+      // Column Name
+
+      var spanColumnName = document.createElement("span");
+      var cellTextName = _framework.filters.title(instance.schema.data.appearance[i]);
+      spanColumnName.appendChild(cellTextName);
+      cell.appendChild(spanColumnName);
       row.appendChild(cell);
 
       // IIFE to save the scope of the column name holding variable
-      if (!instance.schema.data.sorting.disabled.toString().includes(instance.schema.data.appearance[i])){
-        (function(){
-          span.className = "link";
+
+      (function(){
+
+        // Sortable column
+
+        if (!instance.schema.data.sorting.disabled.toString().includes(instance.schema.data.appearance[i])){
+          spanColumnName.className = "link";
           var columnName = instance.schema.data.appearance[i];
-          span.addEventListener("click", function(){
+          spanColumnName.addEventListener("click", function(){
             instance.schema.data.sorting.column = columnName;
             instance.schema.data.sorting.ascending = !instance.schema.data.sorting.ascending;
             _update_schema(instance);
             instance.schema.methods.column_click(columnName);
           });
-        })();
-      }
+        }
+
+        // Hide button
+
+        if (!instance.schema.data.sorting.fixed.toString().includes(instance.schema.data.appearance[i])){
+          var spanHide = document.createElement("span");
+          var cellTextHide = document.createTextNode("x ");
+          spanHide.appendChild(cellTextHide);
+          spanHide.className = "link framework-right";
+          cell.appendChild(spanHide);
+
+          var columnName = instance.schema.data.appearance[i];
+          spanHide.addEventListener("click", function(){
+            var index = instance.schema.data.appearance.indexOf(columnName);
+            if (index !== -1) {
+                instance.schema.data.appearance.splice(index, 1);
+            }
+            _update_schema(instance);
+            instance.schema.methods.column_click(columnName);
+          });
+        }
+      })();
     }
     instance.elements.table_head.appendChild(row);
 
@@ -82,25 +123,20 @@
     // Add classes
 
     instance.elements.table.className += instance.schema.classes.toString().split(",").join(" ");
+
+    instance.schema.methods.table_generated();
   }
 
   var _load_settings = function(data, instance){
-
-    // Omitting success checks because of laziness
     data = data.data;
-
     instance.schema.data.appearance = data.appearance;
     instance.schema.data.sorting = data.sorting;
     _bind_schema(instance);
-    _clear_elements(instance);
     _generate_elements(instance);
   }
 
   var _load_data = function(data, instance){
-
-    // Omitting success checks because of laziness =)
     data = data.data.data;
-
     if (typeof data.docs != "undefined"){
       for (var j = 0; j < data.docs.length; j++) {
         var row = document.createElement("tr");
@@ -159,12 +195,17 @@
           _load_settings(data, instance);
         })
 
+        _framework.event_emitter.on(instance.schema.events.generate_table, function(){
+          _generate_elements(instance);
+        })
+
         _framework.event_emitter.on(instance.schema.events.load_data, function(data){
           _load_data(data, instance);
         })
 
         _framework.event_emitter.on(instance.schema.events.drop_data, function(){
           _clear_elements(instance);
+          instance.schema.methods.data_dropped();
         })
 
         return instance;

@@ -35,20 +35,22 @@
       _framework.event_emitter.emit("event_load_settings", data);
     });
   };
-  var _save_settings = function(){
+  var save_settings = function(){
     console.log("Saving settings.");
-    var settings  = {
+    var settings = {
       appearance : _framework.schemas.tableSchema_feed.data.appearance,
       sorting : _framework.schemas.tableSchema_feed.data.sorting,
     };
     _framework.http.post("/api/settings/save", settings, function(data){
-      refresh();
+      current_page = 1;
+      _framework.event_emitter.emit("event_generate_table", data);
     });
   }
-  var _reset_settings = function(){
+  var reset_settings = function(){
     console.log("Resetting settings.");
     _framework.http.post("/api/settings/save", {}, function(data){
-      refresh();
+      current_page = 1;
+      get_settings();
     });
   }
 
@@ -69,7 +71,6 @@
     console.log("Refreshing feed.");
     current_page = 1;
     _framework.event_emitter.emit("event_drop_data");
-    load(records_per_page);
   };
   var insert = function(){
     console.log("Inserting " + records_to_insert + " records.");
@@ -164,7 +165,7 @@
       },
       methods : {
         click : function(){
-          _reset_settings();
+          reset_settings();
           console.log("buttonSchema_sb_settings_reset button has been pressed.");
         }
       }
@@ -182,12 +183,19 @@
       },
       methods : {
         column_click : function(column_name){
-          _save_settings();
+          save_settings();
           console.log("Column " + column_name + " clicked.");
+        },
+        table_generated : function(){
+          load(records_per_page);
+        },
+        data_dropped : function(){
+          load(records_per_page);
         }
       },
       events : {
         load_settings : "event_load_settings",
+        generate_table : "event_generate_table",
         load_data : "event_load_data",
         drop_data : "event_drop_data"
       }
@@ -199,7 +207,6 @@
   document.addEventListener("DOMContentLoaded", function(){
       _framework.bootstrap();
       get_settings();
-      load(100);
     }
   );
 })();
