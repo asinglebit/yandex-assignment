@@ -1,8 +1,30 @@
 <html>
 <head>
-  <title>Hello</title>
+  <title>Тестовое Задание (Абдулали Гасымов)</title>
+
+  <!-- Framework styles -->
+  <link href="../styles/_framework.css" rel="stylesheet">
+
+  <!-- Framework -->
+  <script src="../scripts/_framework/_framework.js"></script>
+
+  <!-- Framework utils -->
+  <script src="../scripts/_framework/utils/_event_emitter.js"></script>
+
+  <!-- Framework components -->
+  <script src="../scripts/_framework/components/_table.js"></script>
+  <script src="../scripts/_framework/components/_button.js"></script>
+
+  <!-- Application -->
+  <script src="../scripts/app.js"></script>
 </head>
 <body>
-  Hi.
+  <div class="framework-container">
+    <framework-button framework-schema="buttonSchema_load"></framework-button>
+    <framework-button framework-schema="buttonSchema_clear"></framework-button>
+  </div>
+  <div class="framework-container">
+    <framework-table framework-schema="tableSchema_feed"></framework-table>
+  </div>
 </body>
 </html>
