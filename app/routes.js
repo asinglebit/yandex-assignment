@@ -13,7 +13,7 @@ module.exports = function(root){
 
   Router.get('/api/records/add/:amount', RecordController.add);
   Router.get('/api/records/drop', RecordController.drop);
-  Router.get('/api/records/get/:page', RecordController.list);
+  Router.get('/api/records/get/:page/:count', RecordController.list);
 
   // Single Page Application
 

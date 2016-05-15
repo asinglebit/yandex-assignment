@@ -16,11 +16,10 @@
     return;
   }
 
-  // Load Settings
+  // Some basic states
 
-  _framework.http.get("/api/settings/get", function(data){
-    _framework.event_emitter.emit("event_load_settings", data);
-  });
+  var current_page = 1;
+  var records_per_page = 3;
 
   // Define schemas
 
@@ -37,7 +36,7 @@
       },
       methods : {
         click : function(){
-          _framework.http.get("/api/records/get/1", function(data){
+          _framework.http.get("/api/records/get/" + current_page++ + "/" + records_per_page, function(data){
             _framework.event_emitter.emit("event_load_data", data);
           });
           console.log("buttonSchema_load button has been pressed.");
@@ -53,6 +52,7 @@
       },
       methods : {
         click : function(){
+          current_page = 1;
           _framework.event_emitter.emit("event_drop_data");
           console.log("buttonSchema_clear button has been pressed.");
         }
@@ -70,7 +70,11 @@
         columns : []
       },
       methods : {
-        click : function(){}
+        load : function(){
+          _framework.http.get("/api/settings/get", function(data){
+            _framework.event_emitter.emit("event_load_settings", data);
+          });
+        }
       },
       events : {
         load_settings : "event_load_settings",

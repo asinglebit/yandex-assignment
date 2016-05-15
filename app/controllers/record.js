@@ -20,8 +20,9 @@ module.exports = {
   },
   list : function (req, res) {
     var page = req.params.page || 1;
+    var count = req.params.count || 10;
     SettingsService.get().then(function(settings){
-      RecordService.list(settings, page).then(function(result){
+      RecordService.list(settings, page, count).then(function(result){
         res.send({ success: true, data : result });
       }, function(err){
         console.log(err);

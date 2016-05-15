@@ -27,9 +27,6 @@
   var _bind_schema = function(){
     _instance.schema = _framework.schemas[_instance.schema_name];
     _instance.num_of_columns = _instance.schema.data.columns.length;
-
-    _clear_elements();
-    _generate_elements();
   }
 
   var _clear_elements = function(){
@@ -81,6 +78,8 @@
 
     _instance.schema.data.columns = data.appearance;
     _bind_schema();
+    _clear_elements();
+    _generate_elements();
   }
 
   var _load_data = function(data){
@@ -88,16 +87,17 @@
     // Omitting success checks because of laziness
     data = JSON.parse(data).data.data;
 
-
-    for (var j = 0; j < data.docs.length; j++) {
-      var row = document.createElement("tr");
-      for (var i = 0; i < _instance.num_of_columns; i++) {
-        var cell = document.createElement("td");
-        var cellText = document.createTextNode(data.docs[j][_instance.schema.data.columns[i]]);
-        cell.appendChild(cellText);
-        row.appendChild(cell);
+    if (typeof data.docs != "undefined"){
+      for (var j = 0; j < data.docs.length; j++) {
+        var row = document.createElement("tr");
+        for (var i = 0; i < _instance.num_of_columns; i++) {
+          var cell = document.createElement("td");
+          var cellText = document.createTextNode(data.docs[j][_instance.schema.data.columns[i]]);
+          cell.appendChild(cellText);
+          row.appendChild(cell);
+        }
+        _instance.elements.table_body.appendChild(row);
       }
-      _instance.elements.table_body.appendChild(row);
     }
   }
 
@@ -130,6 +130,10 @@
         // Bind schema
 
         _bind_schema();
+
+        // Bind methods
+
+        _instance.schema.methods.load();
 
         // Bind event handlers
 
