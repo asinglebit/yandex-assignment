@@ -2,12 +2,12 @@
 
 (function(){
 
-  'use strict'  
+  'use strict'
 
   // Check framework availability
 
   if (typeof _framework == "undefined") {
-    console.log("_event_emitter.js : No _framework found! Be sure to load it up first!");
+    console.log("_event_emitter.js : No '_framework' module found! Be sure to load it up first!");
     return;
   }
 

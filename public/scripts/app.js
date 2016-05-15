@@ -7,14 +7,20 @@
   // Check framework availability
 
   if (typeof _framework == "undefined") {
-    console.log("app.js : No _framework found! Be sure to load it up first!");
+    console.log("app.js : No '_framework' found! Be sure to load it up first!");
     return;
   }
 
   if (typeof _framework.event_emitter == "undefined") {
-    console.log("app.js : No _event_emitter found! Be sure to load it up first!");
+    console.log("app.js : No 'event_emitter' module found! Be sure to load it up first!");
     return;
   }
+
+  // Load Settings
+
+  _framework.http.get("/api/settings/get", function(data){
+    _framework.event_emitter.emit("event_load_settings", data);
+  });
 
   // Define schemas
 
@@ -31,7 +37,9 @@
       },
       methods : {
         click : function(){
-          _framework.event_emitter.emit("event_load_feed");
+          _framework.http.get("/api/records/get/1", function(data){
+            _framework.event_emitter.emit("event_load_data", data);
+          });
           console.log("buttonSchema_load button has been pressed.");
         }
       }
@@ -45,7 +53,7 @@
       },
       methods : {
         click : function(){
-          _framework.event_emitter.emit("event_clear_feed");
+          _framework.event_emitter.emit("event_drop_data");
           console.log("buttonSchema_clear button has been pressed.");
         }
       }
@@ -59,14 +67,15 @@
       ],
       data : {
         label : "Feed",
-        columns : ["Title", "Author", "Link", "Publication Date", "Rating", "Availability"]
+        columns : []
       },
       methods : {
         click : function(){}
       },
       events : {
-        load_data : "event_load_feed",
-        drop_data : "event_clear_feed"
+        load_settings : "event_load_settings",
+        load_data : "event_load_data",
+        drop_data : "event_drop_data"
       }
     }
   }

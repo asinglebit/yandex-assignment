@@ -7,7 +7,7 @@
   // Check framework availability
 
   if (typeof _framework == "undefined") {
-    console.log("_button.js : No _framework found! Be sure to load it up first!");
+    console.log("_button.js : No '_framework' module found! Be sure to load it up first!");
     return;
   }
 
