@@ -11,29 +11,24 @@
     return;
   }
 
-  var _instance = {
-    schema_name : "",
-    elements : {
-      root : {}
-    }
-  };
 
-  var _bind_schema = function(){
-    _instance.schema = _framework.schemas[_instance.schema_name];
+
+  var _bind_schema = function(instance){
+    instance.schema = _framework.schemas[instance.schema_name];
   }
 
-  var _generate_elements = function(){
+  var _generate_elements = function(instance){
 
     // Generate elements
 
-    _instance.elements.button = document.createElement("BUTTON");
-    _instance.elements.label = document.createTextNode(_instance.schema.data.label);
-    _instance.elements.button.appendChild(_instance.elements.label);
-    _instance.elements.root.appendChild(_instance.elements.button);
+    instance.elements.button = document.createElement("BUTTON");
+    instance.elements.label = document.createTextNode(instance.schema.data.label);
+    instance.elements.button.appendChild(instance.elements.label);
+    instance.elements.root.appendChild(instance.elements.button);
 
     // Add classes
 
-    _instance.elements.button.className += _instance.schema.classes.toString().split(",").join(" ");
+    instance.elements.button.className += instance.schema.classes.toString().split(",").join(" ");
   }
 
   var button = {
@@ -50,28 +45,35 @@
 
       initialize : function(root){
 
+        var instance = {
+          schema_name : "",
+          elements : {
+            root : {}
+          }
+        };
+
         // Get root element
 
-        _instance.elements.root = root;
+        instance.elements.root = root;
 
         // Get schema name
 
-        _instance.schema_name = _instance.elements.root.getAttribute("framework-schema");
-        if (!(_framework.schemas.hasOwnProperty(_instance.schema_name))) {
-          console.log("No schema defined for '" + _instance.schema_name + "' !");
+        instance.schema_name = instance.elements.root.getAttribute("framework-schema");
+        if (!(_framework.schemas.hasOwnProperty(instance.schema_name))) {
+          console.log("No schema defined for '" + instance.schema_name + "' !");
           return false;
         }
 
         // Bind schema
 
-        _bind_schema();
-        _generate_elements();
+        _bind_schema(instance);
+        _generate_elements(instance);
 
         // Bind methods
 
-        _instance.elements.button.addEventListener("click", _instance.schema.methods.click);
+        instance.elements.button.addEventListener("click", instance.schema.methods.click);
 
-        return _instance;
+        return instance;
       }
     }
   }

@@ -21,6 +21,10 @@
   var current_page = 1;
   var records_per_page = 3;
 
+  _framework.http.get("/api/settings/get", function(data){
+    _framework.event_emitter.emit("event_load_settings", data);
+  });  
+
   // Define schemas
 
   _framework.schemas = {
@@ -68,13 +72,6 @@
       data : {
         label : "Feed",
         columns : []
-      },
-      methods : {
-        load : function(){
-          _framework.http.get("/api/settings/get", function(data){
-            _framework.event_emitter.emit("event_load_settings", data);
-          });
-        }
       },
       events : {
         load_settings : "event_load_settings",

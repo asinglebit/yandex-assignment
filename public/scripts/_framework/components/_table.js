@@ -16,20 +16,12 @@
     return;
   }
 
-  var _instance = {
-    schema_name : "",
-    num_of_columns : 0,
-    elements : {
-      root : {}
-    }
-  };
-
-  var _bind_schema = function(){
+  var _bind_schema = function(_instance){
     _instance.schema = _framework.schemas[_instance.schema_name];
     _instance.num_of_columns = _instance.schema.data.columns.length;
   }
 
-  var _clear_elements = function(){
+  var _clear_elements = function(_instance){
     if (_instance.elements.table_body){
       while (_instance.elements.table_body.firstChild) {
         _instance.elements.table_body.removeChild(_instance.elements.table_body.firstChild);
@@ -37,7 +29,7 @@
     }
   }
 
-  var _generate_elements = function(){
+  var _generate_elements = function(_instance){
 
     // Table
 
@@ -65,24 +57,20 @@
     // Add classes
 
     _instance.elements.table.className += _instance.schema.classes.toString().split(",").join(" ");
-
-    // Bind methods
-
-    _instance.elements.table.addEventListener("click", _instance.schema.methods.click);
   }
 
-  var _load_settings = function(data){
+  var _load_settings = function(data, _instance){
 
     // Omitting success checks because of laziness
     data = JSON.parse(data).data;
 
     _instance.schema.data.columns = data.appearance;
-    _bind_schema();
-    _clear_elements();
-    _generate_elements();
+    _bind_schema(_instance);
+    _clear_elements(_instance);
+    _generate_elements(_instance);
   }
 
-  var _load_data = function(data){
+  var _load_data = function(data, _instance){
 
     // Omitting success checks because of laziness
     data = JSON.parse(data).data.data;
@@ -115,6 +103,14 @@
 
       initialize : function(root){
 
+        var _instance = {
+          schema_name : "",
+          num_of_columns : 0,
+          elements : {
+            root : {}
+          }
+        };
+
         // Get root element
 
         _instance.elements.root = root;
@@ -129,24 +125,20 @@
 
         // Bind schema
 
-        _bind_schema();
-
-        // Bind methods
-
-        _instance.schema.methods.load();
+        _bind_schema(_instance);
 
         // Bind event handlers
 
         _framework.event_emitter.on(_instance.schema.events.load_settings, function(data){
-          _load_settings(data);
+          _load_settings(data, _instance);
         })
 
         _framework.event_emitter.on(_instance.schema.events.load_data, function(data){
-          _load_data(data);
+          _load_data(data, _instance);
         })
 
         _framework.event_emitter.on(_instance.schema.events.drop_data, function(){
-          _clear_elements();
+          _clear_elements(_instance);
         })
 
         return _instance;
