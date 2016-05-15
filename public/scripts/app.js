@@ -45,6 +45,12 @@
       refresh();
     });
   }
+  var _reset_settings = function(){
+    console.log("Resetting settings.");
+    _framework.http.post("/api/settings/save", {}, function(data){
+      refresh();
+    });
+  }
 
   // Feed
 
@@ -149,16 +155,17 @@
         }
       }
     },
-    buttonSchema_sb_settings_save : {
+    buttonSchema_db_settings_reset : {
       classes : [
         'button'
       ],
       data : {
-        label : "Save Settings"
+        label : "Reset Settings"
       },
       methods : {
         click : function(){
-          console.log("buttonSchema_sb_settings_save button has been pressed.");
+          _reset_settings();
+          console.log("buttonSchema_sb_settings_reset button has been pressed.");
         }
       }
     },
