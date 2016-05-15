@@ -9,22 +9,26 @@
   if (typeof _framework == "undefined") {
     console.log("_table.js : No '_framework' module found! Be sure to load it up first!");
     return;
-  }
+  };
 
   if (typeof _framework.http == "undefined") {
     console.log("_table.js : No 'http' module found! Be sure to load it up first!");
     return;
-  }
+  };
 
-  if (typeof _framework.http == "undefined") {
+  if (typeof _framework.filters == "undefined") {
     console.log("_table.js : No 'filters' module found! Be sure to load it up first!");
     return;
-  }
+  };
+
+  var _update_schema = function(instance){
+    _framework.schemas[instance.schema_name] = instance.schema;
+  };
 
   var _bind_schema = function(instance){
     instance.schema = _framework.schemas[instance.schema_name];
     instance.num_of_columns = instance.schema.data.appearance.length;
-  }
+  };
 
   var _clear_elements = function(instance){
     if (instance.elements.table_body){
@@ -32,7 +36,7 @@
         instance.elements.table_body.removeChild(instance.elements.table_body.firstChild);
       }
     }
-  }
+  };
 
   var _generate_elements = function(instance){
 
@@ -57,7 +61,12 @@
         (function(){
           span.className = "link";
           var columnName = instance.schema.data.appearance[i];
-          span.addEventListener("click", function(){instance.schema.methods.column_click(columnName)});
+          span.addEventListener("click", function(){
+            instance.schema.data.sorting.column = columnName;
+            instance.schema.data.sorting.ascending = !instance.schema.data.sorting.ascending;
+            _update_schema(instance);
+            instance.schema.methods.column_click(columnName);
+          });
         })();
       }
     }

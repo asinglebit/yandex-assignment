@@ -6,7 +6,7 @@ module.exports = function(root){
 
   // Settings
 
-  Router.get('/api/settings/save', SettingsController.save);
+  Router.post('/api/settings/save', SettingsController.save);
   Router.get('/api/settings/get', SettingsController.get);
 
   // Feed

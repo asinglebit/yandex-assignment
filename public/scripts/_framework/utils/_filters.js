@@ -21,7 +21,7 @@
         return document.createTextNode(input);
       } else {
         var date = new Date(input);
-        return document.createTextNode(date.toTimeString());
+        return document.createTextNode(date.toDateString());
       }
     } else {
       var a = document.createElement('a');

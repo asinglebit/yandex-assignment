@@ -16,13 +16,18 @@
     return;
   }
 
+  if (typeof _framework.http == "undefined") {
+    console.log("app.js : No 'http' module found! Be sure to load it up first!");
+    return;
+  }
+
   // Some basic variables
 
   var current_page = 1;
   var records_per_page = 30;
   var records_to_insert = 150;
 
-  // Some basic functions
+  // Settings
 
   var get_settings = function(){
     console.log("Getting settings.");
@@ -30,6 +35,19 @@
       _framework.event_emitter.emit("event_load_settings", data);
     });
   };
+  var _save_settings = function(){
+    console.log("Saving settings.");
+    var settings  = {
+      appearance : _framework.schemas.tableSchema_feed.data.appearance,
+      sorting : _framework.schemas.tableSchema_feed.data.sorting,
+    };
+    _framework.http.post("/api/settings/save", settings, function(data){
+      refresh();
+    });
+  }
+
+  // Feed
+
   var load = function(records_per_page){
     console.log("Loading page " + current_page + " by " + records_per_page + " records per page.");
     _framework.http.get("/api/records/get/" + current_page++ + "/" + records_per_page, function(data){
@@ -47,27 +65,18 @@
     _framework.event_emitter.emit("event_drop_data");
     load(records_per_page);
   };
-  var drop = function(){
-    console.log("Dropping feed.");
-    _framework.http.get("/api/records/drop", function(data){
-      refresh();
-    });
-  };
   var insert = function(){
     console.log("Inserting " + records_to_insert + " records.");
     _framework.http.get("/api/records/add/" + records_to_insert, function(data){
       refresh();
     });
   };
-  var save_settings = function(){
-    console.log("Saving settings.");
-    _framework.http.get("/api/settings/save", function(data){
+  var drop = function(){
+    console.log("Dropping feed.");
+    _framework.http.get("/api/records/drop", function(data){
       refresh();
     });
-  }
-
-  get_settings();
-  load(100);
+  };
 
   // Application events
 
@@ -149,7 +158,6 @@
       },
       methods : {
         click : function(){
-          save_settings();
           console.log("buttonSchema_sb_settings_save button has been pressed.");
         }
       }
@@ -167,6 +175,7 @@
       },
       methods : {
         column_click : function(column_name){
+          _save_settings();
           console.log("Column " + column_name + " clicked.");
         }
       },
@@ -180,5 +189,10 @@
 
   // Initialize _framework on document load
 
-  document.addEventListener("DOMContentLoaded", _framework.bootstrap);
+  document.addEventListener("DOMContentLoaded", function(){
+      _framework.bootstrap();
+      get_settings();
+      load(100);
+    }
+  );
 })();

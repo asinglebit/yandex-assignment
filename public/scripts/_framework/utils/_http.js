@@ -12,6 +12,16 @@
   }
 
   var http = {
+    post : function(url, data, callback){
+      var xmlHttp = new XMLHttpRequest();
+      xmlHttp.onreadystatechange = function() {
+        if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+        callback(JSON.parse(xmlHttp.responseText));
+      }
+      xmlHttp.open("POST", url, true);
+      xmlHttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+      xmlHttp.send(JSON.stringify(data));
+    },
     get : function(url, callback){
       var xmlHttp = new XMLHttpRequest();
       xmlHttp.onreadystatechange = function() {

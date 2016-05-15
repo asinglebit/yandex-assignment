@@ -6,7 +6,13 @@ module.exports = {
   save : function (settings) {
     var deferred = Q.defer();
 
-    var _Settings = settings || new Settings({});
+    var _Settings = new Settings({});
+    if (typeof settings != "undefined"){
+      _Settings.appearance = settings.appearance;
+      _Settings.sorting = settings.sorting;
+      console.log(settings);
+    }
+
     Settings.remove(function (err) {
       if (!err) {
         console.log("Settings have been successfully dropped!");
