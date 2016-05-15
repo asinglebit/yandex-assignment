@@ -77,11 +77,12 @@
 
       (function(){
 
+        var columnName = instance.schema.data.appearance[i];
+
         // Sortable column
 
         if (!instance.schema.data.sorting.disabled.toString().includes(instance.schema.data.appearance[i])){
           spanColumnName.className = "link";
-          var columnName = instance.schema.data.appearance[i];
           spanColumnName.addEventListener("click", function(){
             instance.schema.data.sorting.column = columnName;
             instance.schema.data.sorting.ascending = !instance.schema.data.sorting.ascending;
@@ -99,16 +100,60 @@
           spanHide.className = "link framework-right";
           cell.appendChild(spanHide);
 
-          var columnName = instance.schema.data.appearance[i];
           spanHide.addEventListener("click", function(){
             var index = instance.schema.data.appearance.indexOf(columnName);
             if (index !== -1) {
-                instance.schema.data.appearance.splice(index, 1);
+              instance.schema.data.appearance.splice(index, 1);
             }
             _update_schema(instance);
             instance.schema.methods.column_click(columnName);
           });
         }
+
+        // Left button
+
+        if (!instance.schema.data.sorting.fixed.toString().includes(instance.schema.data.appearance[i])){
+          var index = instance.schema.data.appearance.indexOf(columnName);
+          if ((index !== -1) && (index < instance.schema.data.appearance.length) && (index > 0)){
+            if (!instance.schema.data.sorting.fixed.toString().includes(instance.schema.data.appearance[index - 1])){
+              var spanLeft = document.createElement("span");
+              var cellTextLeft = document.createTextNode("<");
+              spanLeft.appendChild(cellTextLeft);
+              spanLeft.className = "link framework-left";
+              cell.appendChild(spanLeft);
+
+              spanLeft.addEventListener("click", function(){
+                var removed = instance.schema.data.appearance.splice(index, 1)[0];
+                instance.schema.data.appearance.splice(index - 1, 0, removed)
+                _update_schema(instance);
+                instance.schema.methods.column_click(columnName);
+              });
+            }
+          }
+        }
+
+        // Right button
+
+        if (!instance.schema.data.sorting.fixed.toString().includes(instance.schema.data.appearance[i])){
+          var index = instance.schema.data.appearance.indexOf(columnName);
+          if ((index !== -1) && (index < instance.schema.data.appearance.length - 1) && (index > 0)){
+            if (!instance.schema.data.sorting.fixed.toString().includes(instance.schema.data.appearance[index + 1])){
+              var spanRight = document.createElement("span");
+              var cellTextRight = document.createTextNode(">");
+              spanRight.appendChild(cellTextRight);
+              spanRight.className = "link";
+              cell.appendChild(spanRight);
+
+              spanRight.addEventListener("click", function(){
+                var removed = instance.schema.data.appearance.splice(index, 1)[0];
+                instance.schema.data.appearance.splice(index + 1, 0, removed)
+                _update_schema(instance);
+                instance.schema.methods.column_click(columnName);
+              });
+            }
+          }
+        }
+
       })();
     }
     instance.elements.table_head.appendChild(row);
