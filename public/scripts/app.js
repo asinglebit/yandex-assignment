@@ -63,7 +63,7 @@
         _framework.event_emitter.emit("event_load_data", data);
       } else {
         console.log("No records left.");
-        current_page = 1;
+        current_page--;
       };
     });
   };
