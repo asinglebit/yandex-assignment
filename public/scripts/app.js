@@ -24,8 +24,8 @@
   // Some basic variables
 
   var current_page = 1;
-  var records_per_page = 30;
-  var records_to_insert = 150;
+  var records_per_page = 50;
+  var records_to_insert = 5000;
 
   // Settings
 
