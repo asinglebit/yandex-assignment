@@ -1,6 +1,7 @@
 // Framework
 
 var _framework = _framework || (function () {
+
   'use strict';
 
   // Private space

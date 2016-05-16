@@ -32,6 +32,7 @@
     this.eventList[event] = this.eventList[event] || [];
     this.eventList[event].push(callback);
   };
+  
   event_emitter.prototype.emit = function(event, data){
     _emit.apply(this, [event, data])
   };

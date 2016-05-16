@@ -9,17 +9,17 @@
     if (typeof _framework === "undefined") {
         console.log("_table.js : No '_framework' module found! Be sure to load it up first!");
         return;
-    }
+    };
 
     if (typeof _framework.http === "undefined") {
         console.log("_table.js : No 'http' module found! Be sure to load it up first!");
         return;
-    }
+    };
 
     if (typeof _framework.filters === "undefined") {
         console.log("_table.js : No 'filters' module found! Be sure to load it up first!");
         return;
-    }
+    };
 
     function Table(root) {
         var self = this;
@@ -31,7 +31,7 @@
         this.schema_name = root.getAttribute('framework-schema');
         if (!_framework.schemas[this.schema_name]) {
             console.error("No schema defined for '" + this.schema_name + "' !");
-        }
+        };
 
         // Bind schema
 
@@ -55,7 +55,7 @@
           self._clear_elements();
           self.schema.methods.data_dropped();
         })
-    }
+    };
 
     Table.prototype._bind_schema = function() {
         this.schema = _framework.schemas[this.schema_name];
@@ -132,7 +132,7 @@
               self._update_schema();
               self.schema.methods.column_click(columnName);
             });
-          }
+          };
 
           // Hide button
 
@@ -151,7 +151,7 @@
               self._update_schema();
               self.schema.methods.column_click(columnName);
             });
-          }
+          };
 
           // Left button
 
@@ -171,9 +171,9 @@
                   self._update_schema();
                   self.schema.methods.column_click(columnName);
                 });
-              }
-            }
-          }
+              };
+            };
+          };
 
           // Right button
 
@@ -193,12 +193,13 @@
                   self._update_schema();
                   self.schema.methods.column_click(columnName);
                 });
-              }
-            }
-          }
+              };
+            };
+          };
 
         })();
-      }
+      };
+
       this.elements.table_head.appendChild(row);
 
       // Table body
@@ -233,15 +234,14 @@
             var cellText = _framework.filters.value(data.docs[j][this.schema.data.appearance[i]]);
             cell.appendChild(cellText);
             row.appendChild(cell);
-          }
+          };
           this.elements.table_body.appendChild(row);
-        }
-      }
+        };
+      };
     };
 
     _framework.register({
         constructor: Table,
         tag: 'framework-table'
     });
-
 })();

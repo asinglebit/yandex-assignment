@@ -9,17 +9,17 @@
   if (typeof _framework == "undefined") {
     console.log("app.js : No '_framework' found! Be sure to load it up first!");
     return;
-  }
+  };
 
   if (typeof _framework.event_emitter == "undefined") {
     console.log("app.js : No 'event_emitter' module found! Be sure to load it up first!");
     return;
-  }
+  };
 
   if (typeof _framework.http == "undefined") {
     console.log("app.js : No 'http' module found! Be sure to load it up first!");
     return;
-  }
+  };
 
   // Some basic variables
 
@@ -45,14 +45,14 @@
       current_page = 1;
       _framework.event_emitter.emit("event_generate_table", data);
     });
-  }
+  };
   var reset_settings = function(){
     console.log("Resetting settings.");
     _framework.http.post("/api/settings/save", {}, function(data){
       current_page = 1;
       get_settings();
     });
-  }
+  };
 
   // Feed
 
@@ -64,7 +64,7 @@
       } else {
         console.log("No records left.");
         current_page = 1;
-      }
+      };
     });
   };
   var refresh = function(){
@@ -91,7 +91,7 @@
     if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
       load(records_per_page);
       console.log("Scrolled to bottom.");
-    }
+    };
   };
 
   // Define schemas
